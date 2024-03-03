@@ -19,8 +19,8 @@ import {
 const Customizer = () => {
 	const snap = useSnapshot(state);
 	const [file, setFile] = useState('');
-	const [promt, setPromt] = useState('');
-	const [isGeneratingImg, setIsGeneratingImg] = useState(false);
+	const [prompt, setPrompt] = useState('');
+	const [generatingImg, setGeneratingImg] = useState(false);
 	const [activeEditorTab, setActiveEditorTab] = useState('');
 	const [activeFilterTab, setActiveFilterTab] = useState({
 		logoShirt: true,
@@ -33,12 +33,76 @@ const Customizer = () => {
 			case 'colorpicker':
 				return <ColorPicker />;
 			case 'filepicker':
-				return <FilePicker />;
+				return (
+					<FilePicker
+						file={file}
+						setFile={setFile}
+						readFile={readFile}
+					/>
+				);
 			case 'aipicker':
-				return <AIPicker />;
+				return (
+					<AIPicker
+						prompt={prompt}
+						setPrompt={setPrompt}
+						generatingImg={generatingImg}
+						handleSubmit={handleSubmit}
+					/>
+				);
 			default:
 				return null;
 		}
+	};
+
+	const handleSubmit = (type) => {
+		if (!prompt) {
+			return alert('Please enter a prompt');
+		}
+		try {
+		} catch (error) {
+			alert('An error occurred', error);
+		} finally {
+			setGeneratingImg(false);
+			setActiveEditorTab('');
+		}
+	};
+
+	const handleDecal = (type, result) => {
+		const decalType = DecalTypes[type];
+
+		state[decalType.stateProperty] = result;
+
+		if (!activeFilterTab[decalType.filterTab]) {
+			handleActiveFilterTab(decalType.filterTab);
+		}
+	};
+	const handleActiveFilterTab = (tabName) => {
+		switch (tabName) {
+			case 'logoShirt':
+				state.isLogoTexture = !activeFilterTab[tabName];
+				break;
+			case 'stylishShirt':
+				state.isFullTexture = !activeFilterTab[tabName];
+				break;
+			default:
+				state.isLogoTexture = true;
+				state.isFullTexture = false;
+				break;
+		}
+
+		// After setting the state, activeFilterTab is updated
+		setActiveFilterTab((prevState) => {
+			return {
+				...prevState,
+				[tabName]: !prevState[tabName],
+			};
+		});
+	};
+	const readFile = (type) => {
+		reader(file).then((result) => {
+			handleDecal(type, result);
+			setActiveEditorTab('');
+		});
 	};
 
 	return (
@@ -85,8 +149,10 @@ const Customizer = () => {
 								key={tab.name}
 								tab={tab}
 								isFilterTab
-								isActiveTab=""
-								handleClick={() => {}}
+								isActiveTab={activeFilterTab[tab.name]}
+								handleClick={() =>
+									handleActiveFilterTab(tab.name)
+								}
 							/>
 						))}
 					</motion.div>
