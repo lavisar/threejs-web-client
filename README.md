@@ -1,5 +1,8 @@
 # 3D Shirt Logo Design
 ### Made with threejs + Reactjs
-
+**-Deployment**: https://3d-shirt-threejs.vercel.app/
+<br/>
 **- Demo**
-![image](https://github.com/lavisar/threejs-web-client/assets/67550867/b2deeca5-5397-4900-b390-b3324de5ca99)
+![image](https://github.com/lavisar/threejs-web-client/assets/67550867/fc8ab687-b96e-4901-b5f6-6aea53736f81)
+
+
